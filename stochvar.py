@@ -1,6 +1,4 @@
-"""
-
-"""
+"""Stochastic variables."""
 
 import matplotlib.pyplot as plt
 from math import sqrt
@@ -16,7 +14,7 @@ class NotImplementedYet(Exception):
 
 
 class StochasticVariable(object):
-    
+
     """SV."""
 
     def generate(self, size=1):
@@ -50,6 +48,7 @@ class UnivariateNormal(UnivariateStochasticVariable):
     """
 
     def __init__(self, location=0.0, scale=1.0):
+        """Set location and scale for normal distribution."""
         self.location = float(location)
         self.scale = float(scale)
 
@@ -67,7 +66,6 @@ class UnivariateNormal(UnivariateStochasticVariable):
         True
         
         """
-
         if isinstance(other, UnivariateNormal):
             location = self.location + other.location
             scale = sqrt(self.scale**2 + other.scale**2)
@@ -80,6 +78,7 @@ class UnivariateNormal(UnivariateStochasticVariable):
         return stats.norm.rvs(loc=self.location, scale=self.scale, size=size)
 
     def plot_pdf(self, **kwargs):
+        """Plot probability distribution for normal distribution."""
         x_low = self.location - 5 * self.scale
         x_high = self.location + 5 * self.scale
         x = np.linspace(x_low, x_high, 100)
@@ -88,11 +87,15 @@ class UnivariateNormal(UnivariateStochasticVariable):
         
 
 class UnivariateDirac(UnivariateStochasticVariable):
+
+    """Dirac distribution."""
     
     def __init__(self, location=0.0):
+        """Set location for Dirac distribution."""
         self.location = float(location)
 
     def __add__(self, other):
+        """Add Dirac distribution with another distribution."""
         if isinstance(other, UnivariateDirac):
             location = self.location + other.location
             return UnivariateDirac(location)
@@ -111,7 +114,6 @@ class UnivariateDirac(UnivariateStochasticVariable):
         -18.0
 
         """
-        
         if isinstance(other, UnivariateDirac):
             location = self.location * other.location
             return UnivariateDirac(location)
@@ -128,7 +130,6 @@ class UnivariateDirac(UnivariateStochasticVariable):
         0.0
 
         """
-        
         if size == 1:
             return self.location
         else: 
