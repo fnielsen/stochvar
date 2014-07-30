@@ -125,6 +125,24 @@ class UnivariateDirac(UnivariateStochasticVariable):
         else:
             raise NotImplementedYet
 
+    def __div__(self, other):
+        """Divide a Dirac distribution with another distribution. 
+
+        Example
+        -------
+        >>> d1 = UnivariateDirac(-3)
+        >>> d2 = UnivariateDirac(6)
+        >>> d3 = d1 / d2
+        >>> d3.location
+        -0.5
+
+        """
+        if isinstance(other, UnivariateDirac):
+            location = self.location / other.location
+            return UnivariateDirac(location)
+        else:
+            raise NotImplementedYet
+
     def __mul__(self, other):
         """Multiple a Dirac distribution with another distribution.
 
@@ -154,6 +172,31 @@ class UnivariateDirac(UnivariateStochasticVariable):
                 location = self.location * other.location
                 scale = abs(self.location * other.scale)
                 return UnivariateNormal(location, scale)
+        else:
+            raise NotImplementedYet
+
+    def __pow__(self, other):
+        """Take the power.
+
+        Example
+        -------
+        >>> d1 = UnivariateDirac(2)
+        >>> d2 = d1 ** 3
+        >>> d2.location
+        8.0
+
+        >>> d3 = UnivariateDirac(-2)
+        >>> d4 = d1 ** d3
+        >>> d4.location
+        0.25
+        
+        """
+        if isinstance(other, int):
+            location = self.location ** other
+            return UnivariateDirac(location)
+        elif isinstance(other, UnivariateDirac):
+            location = self.location ** other.location
+            return UnivariateDirac(location)
         else:
             raise NotImplementedYet
 
