@@ -1,4 +1,15 @@
-"""Stochastic variables."""
+"""Stochastic variables and algebra.
+
+Example
+-------
+>>> plt.ion()
+>>> n = Normal()
+>>> n.plot_pdf_from_generated()
+>>> n.plot_pdf(linewidth=3)
+>>> plt.show()
+
+"""
+
 
 import matplotlib.pyplot as plt
 from math import sqrt
@@ -17,7 +28,7 @@ class StochasticVariable(object):
 
     """SV."""
 
-    def generate(self, size=1):
+    def generate(self):
         """Generate realizations of the stochastic variable."""
         raise NotImplementedYet
 
@@ -25,17 +36,15 @@ class StochasticVariable(object):
         """Plot the probability density function."""
         raise NotImplementedYet
 
-
-class UnivariateStochasticVariable(StochasticVariable):
-
-    """Univariate stochastic variable."""
-
-    pass
+    def plot_pdf_from_generated(self, samples=10000, **kwargs):
+        """Generate a histogram of samples."""
+        data = [self.generate() for _ in range(samples)]
+        plt.hist(data, bins=round(sqrt(samples)), normed=True, **kwargs)
 
 
-class UnivariateNormal(UnivariateStochasticVariable):
+class Normal(StochasticVariable):
 
-    """Univariate normal distribution.
+    """Normal distribution.
 
     Attributes
     ----------
@@ -44,10 +53,26 @@ class UnivariateNormal(UnivariateStochasticVariable):
     scale : float
         Standard deviation
 
+    Example
+    -------
+    >>> n = Normal()
+    >>> n.location
+    0.0
+    >>> isinstance(n, StochasticVariable)
+    True
+
     """
 
     def __init__(self, location=0.0, scale=1.0):
-        """Set location and scale for normal distribution."""
+        """Set location and scale for normal distribution.
+
+        Example
+        -------
+        >>> n = Normal(scale=2.0)
+        >>> n.scale
+        2.0
+
+        """
         self.location = float(location)
         self.scale = float(scale)
 
@@ -56,33 +81,39 @@ class UnivariateNormal(UnivariateStochasticVariable):
 
         Examples
         --------
-        >>> a = UnivariateNormal()
-        >>> b = UnivariateNormal()
-        >>> c = a + b
-        >>> c.location
+        >>> n1 = Normal()
+        >>> n2 = Normal()
+        >>> n3 = n1 + n2
+        >>> n3.location
         0.0
-        >>> c.scale > 1.4
+        >>> n3.scale > 1.4
         True
+        >>> n4 = n1 + 3
+        >>> n4.location
+        3.0
 
         """
-        if isinstance(other, UnivariateNormal):
+        if isinstance(other, Normal):
             location = self.location + other.location
             scale = sqrt(self.scale**2 + other.scale**2)
-            return UnivariateNormal(location, scale)
+            return Normal(location, scale)
+        elif isinstance(other, int) or isinstance(other, float):
+            location = self.location + other
+            return Normal(location, self.scale)
         else:
             raise NotImplementedYet
 
-    def generate(self, size=1):
+    def generate(self):
         """Generate realization of normal distribution.
 
         Example
         -------
-        >>> n = UnivariateNormal()
-        >>> len(n.generate())
-        1
+        >>> n = Normal()
+        >>> type(n.generate()) is float
+        True
 
         """
-        return stats.norm.rvs(loc=self.location, scale=self.scale, size=size)
+        return stats.norm.rvs(loc=self.location, scale=self.scale)
 
     def plot_pdf(self, **kwargs):
         """Plot probability distribution for normal distribution."""
@@ -93,12 +124,28 @@ class UnivariateNormal(UnivariateStochasticVariable):
         plt.plot(x, pdf, **kwargs)
 
 
-class UnivariateDirac(UnivariateStochasticVariable):
+class Dirac(StochasticVariable):
 
-    """Dirac distribution."""
+    """Dirac distribution.
+
+    Example
+    -------
+    >>> d = Dirac()
+    >>> isinstance(d, StochasticVariable)
+    True
+
+    """
 
     def __init__(self, location=0.0):
-        """Set location for Dirac distribution."""
+        """Set location for Dirac distribution.
+
+        Example
+        -------
+        >>> d = Dirac(3)
+        >>> d.location
+        3.0
+
+        """
         self.location = float(location)
 
     def __add__(self, other):
@@ -106,8 +153,8 @@ class UnivariateDirac(UnivariateStochasticVariable):
 
         Example
         -------
-        >>> d1 = UnivariateDirac(2)
-        >>> d2 = UnivariateNormal(1, 2)
+        >>> d1 = Dirac(2)
+        >>> d2 = Normal(1, 2)
         >>> d3 = d1 + d2
         >>> d3.location
         3.0
@@ -115,31 +162,31 @@ class UnivariateDirac(UnivariateStochasticVariable):
         2.0
 
         """
-        if isinstance(other, UnivariateDirac):
+        if isinstance(other, Dirac):
             location = self.location + other.location
-            return UnivariateDirac(location)
-        elif isinstance(other, UnivariateNormal):
+            return Dirac(location)
+        elif isinstance(other, Normal):
             location = self.location + other.location
             scale = other.scale
-            return UnivariateNormal(location, scale)
+            return Normal(location, scale)
         else:
             raise NotImplementedYet
 
     def __div__(self, other):
-        """Divide a Dirac distribution with another distribution. 
+        """Divide a Dirac distribution with another distribution.
 
         Example
         -------
-        >>> d1 = UnivariateDirac(-3)
-        >>> d2 = UnivariateDirac(6)
+        >>> d1 = Dirac(-3)
+        >>> d2 = Dirac(6)
         >>> d3 = d1 / d2
         >>> d3.location
         -0.5
 
         """
-        if isinstance(other, UnivariateDirac):
+        if isinstance(other, Dirac):
             location = self.location / other.location
-            return UnivariateDirac(location)
+            return Dirac(location)
         else:
             raise NotImplementedYet
 
@@ -148,13 +195,13 @@ class UnivariateDirac(UnivariateStochasticVariable):
 
         Examples
         --------
-        >>> d1 = UnivariateDirac(-3)
-        >>> d2 = UnivariateDirac(6)
+        >>> d1 = Dirac(-3)
+        >>> d2 = Dirac(6)
         >>> d3 = d1 * d2
         >>> d3.location
         -18.0
 
-        >>> d4 = UnivariateNormal(scale=2.0)
+        >>> d4 = Normal(scale=2.0)
         >>> d5 = d1 * d4
         >>> d5.scale
         6.0
@@ -162,16 +209,16 @@ class UnivariateDirac(UnivariateStochasticVariable):
         0.0
 
         """
-        if isinstance(other, UnivariateDirac):
+        if isinstance(other, Dirac):
             location = self.location * other.location
-            return UnivariateDirac(location)
-        elif isinstance(other, UnivariateNormal):
+            return Dirac(location)
+        elif isinstance(other, Normal):
             if self.location == 0:
-                return UnivariateDirac()
+                return Dirac()
             else:
                 location = self.location * other.location
                 scale = abs(self.location * other.scale)
-                return UnivariateNormal(location, scale)
+                return Normal(location, scale)
         else:
             raise NotImplementedYet
 
@@ -180,40 +227,37 @@ class UnivariateDirac(UnivariateStochasticVariable):
 
         Example
         -------
-        >>> d1 = UnivariateDirac(2)
+        >>> d1 = Dirac(2)
         >>> d2 = d1 ** 3
         >>> d2.location
         8.0
 
-        >>> d3 = UnivariateDirac(-2)
+        >>> d3 = Dirac(-2)
         >>> d4 = d1 ** d3
         >>> d4.location
         0.25
-        
+
         """
         if isinstance(other, int):
             location = self.location ** other
-            return UnivariateDirac(location)
-        elif isinstance(other, UnivariateDirac):
+            return Dirac(location)
+        elif isinstance(other, Dirac):
             location = self.location ** other.location
-            return UnivariateDirac(location)
+            return Dirac(location)
         else:
             raise NotImplementedYet
 
-    def generate(self, size=1):
+    def generate(self):
         """Generate realizations of Dirac distribution.
 
         Examples
         --------
-        >>> d = UnivariateDirac()
+        >>> d = Dirac()
         >>> d.generate()
         0.0
 
         """
-        if size == 1:
-            return self.location
-        else:
-            return self.location * np.ones(size)
+        return self.location
 
     def plot_pdf(self, **kwargs):
         """Plot Dirac distribution."""
