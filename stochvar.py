@@ -124,6 +124,45 @@ class Normal(StochasticVariable):
         plt.plot(x, pdf, **kwargs)
 
 
+class Cauchy(StochasticVariable):
+
+    """Cauchy distribution."""
+
+    def __init__(self, location=0.0, scale=1.0):
+        """Set location for Dirac distribution.
+
+        Example
+        -------
+        >>> c = Cauchy(3)
+        >>> c.location
+        3.0
+
+        """
+        self.location = float(location)
+        self.scale = scale
+
+    def generate(self):
+        """Generate realization of Cauchy distribution.
+
+        Example
+        -------
+        >>> c = Cauchy()
+        >>> type(c.generate()) is float
+        True
+
+        """
+        # 'rvs' returns numpy.float64
+        return float(stats.cauchy.rvs(loc=self.location, scale=self.scale))
+
+    def plot_pdf(self, **kwargs):
+        """Plot probability distribution for Cauchy distribution."""
+        x_low = self.location - 50 * self.scale
+        x_high = self.location + 50 * self.scale
+        x = np.linspace(x_low, x_high, 100)
+        pdf = stats.cauchy.pdf(x, loc=self.location, scale=self.scale)
+        plt.plot(x, pdf, **kwargs)
+
+
 class Dirac(StochasticVariable):
 
     """Dirac distribution.
