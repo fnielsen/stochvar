@@ -17,24 +17,17 @@ from scipy import stats
 import numpy as np
 
 
-class NotImplementedYet(Exception):
-
-    """Exception for combinations not yet implemented."""
-
-    pass
-
-
 class StochasticVariable(object):
 
-    """SV."""
+    """Abstract class for stochastic variables."""
 
     def generate(self):
         """Generate realizations of the stochastic variable."""
-        raise NotImplementedYet
+        raise NotImplementedError
 
     def plot_pdf(self, **kwargs):
         """Plot the probability density function."""
-        raise NotImplementedYet
+        raise NotImplementedError
 
     def plot_pdf_from_generated(self, samples=10000, **kwargs):
         """Generate a histogram of samples."""
@@ -101,7 +94,7 @@ class Normal(StochasticVariable):
             location = self.location + other
             return Normal(location, self.scale)
         else:
-            raise NotImplementedYet
+            raise NotImplementedError
 
     def generate(self):
         """Generate realization of normal distribution.
@@ -209,7 +202,7 @@ class Dirac(StochasticVariable):
             scale = other.scale
             return Normal(location, scale)
         else:
-            raise NotImplementedYet
+            raise NotImplementedError
 
     def __div__(self, other):
         """Divide a Dirac distribution with another distribution.
@@ -227,7 +220,7 @@ class Dirac(StochasticVariable):
             location = self.location / other.location
             return Dirac(location)
         else:
-            raise NotImplementedYet
+            raise NotImplementedError
 
     def __mul__(self, other):
         """Multiple a Dirac distribution with another distribution.
@@ -259,7 +252,7 @@ class Dirac(StochasticVariable):
                 scale = abs(self.location * other.scale)
                 return Normal(location, scale)
         else:
-            raise NotImplementedYet
+            raise NotImplementedError
 
     def __pow__(self, other):
         """Take the power.
@@ -284,7 +277,7 @@ class Dirac(StochasticVariable):
             location = self.location ** other.location
             return Dirac(location)
         else:
-            raise NotImplementedYet
+            raise NotImplementedError
 
     def generate(self):
         """Generate realizations of Dirac distribution.
