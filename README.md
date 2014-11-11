@@ -1,4 +1,0 @@
-stochvar
-========
-
-Stochastic variables
