@@ -96,6 +96,15 @@ class Normal(StochasticVariable):
         else:
             raise NotImplementedError
 
+    def __mul__(self, other):
+        """Multiply stochastical variable."""
+        if isinstance(other, Dirac):
+            location = self.location * other.location
+            scale = self.scale * other.location
+            return Normal(location, scale)
+        else:
+            raise NotImplementedError
+
     def generate(self):
         """Generate realization of normal distribution.
 
