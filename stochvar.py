@@ -46,8 +46,8 @@ class Normal(StochasticVariable):
     scale : float
         Standard deviation
 
-    Example
-    -------
+    Examples
+    --------
     >>> n = Normal()
     >>> n.location
     0.0
@@ -59,8 +59,8 @@ class Normal(StochasticVariable):
     def __init__(self, location=0.0, scale=1.0):
         """Set location and scale for normal distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> n = Normal(scale=2.0)
         >>> n.scale
         2.0
@@ -108,8 +108,8 @@ class Normal(StochasticVariable):
     def generate(self):
         """Generate realization of normal distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> n = Normal()
         >>> type(n.generate()) is float
         True
@@ -133,8 +133,8 @@ class Cauchy(StochasticVariable):
     def __init__(self, location=0.0, scale=1.0):
         """Set location for Dirac distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> c = Cauchy(3)
         >>> c.location
         3.0
@@ -146,8 +146,8 @@ class Cauchy(StochasticVariable):
     def generate(self):
         """Generate realization of Cauchy distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> c = Cauchy()
         >>> type(c.generate()) is float
         True
@@ -169,8 +169,8 @@ class Dirac(StochasticVariable):
 
     """Dirac distribution.
 
-    Example
-    -------
+    Examples
+    --------
     >>> d = Dirac()
     >>> isinstance(d, StochasticVariable)
     True
@@ -180,8 +180,8 @@ class Dirac(StochasticVariable):
     def __init__(self, location=0.0):
         """Set location for Dirac distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> d = Dirac(3)
         >>> d.location
         3.0
@@ -192,8 +192,8 @@ class Dirac(StochasticVariable):
     def __add__(self, other):
         """Add Dirac distribution with another distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> d1 = Dirac(2)
         >>> d2 = Normal(1, 2)
         >>> d3 = d1 + d2
@@ -216,8 +216,8 @@ class Dirac(StochasticVariable):
     def __div__(self, other):
         """Divide a Dirac distribution with another distribution.
 
-        Example
-        -------
+        Examples
+        --------
         >>> d1 = Dirac(-3)
         >>> d2 = Dirac(6)
         >>> d3 = d1 / d2
@@ -266,8 +266,8 @@ class Dirac(StochasticVariable):
     def __pow__(self, other):
         """Take the power.
 
-        Example
-        -------
+        Examples
+        --------
         >>> d1 = Dirac(2)
         >>> d2 = d1 ** 3
         >>> d2.location
