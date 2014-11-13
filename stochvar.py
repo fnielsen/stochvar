@@ -11,10 +11,13 @@ Example
 """
 
 
-import matplotlib.pyplot as plt
 from math import sqrt
-from scipy import stats
+
+import matplotlib.pyplot as plt
+
 import numpy as np
+
+from scipy import stats
 
 
 class StochasticVariable(object):
